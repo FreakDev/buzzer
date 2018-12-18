@@ -18,7 +18,7 @@
             </div>
 
             <div class="button">
-                
+
             </div>
 
             <div class="score"></div>
@@ -26,6 +26,13 @@
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
+            var STATUS_LIST = {
+                'INTRO': 'INTRO',
+                'PAUSED': 'PAUSED', 
+                'READY': 'READY',
+                'PLAYING': 'PLAYING',
+            }
+
             var socket = io();
             var localUuid = localStorage.getItem('uuid')
             var storedNickname = localStorage.getItem('nickname')
@@ -43,6 +50,17 @@
                 nicknameInput.value = storedNickname                
             })
 
+            socket.on('game', function (game) {
+                body = document.querySelector('body')
+                if (game.status === STATUS_LIST.PAUSED) {
+                    !body.classList.contains('paused') && body.classList.add('paused')
+                }
+
+                if (game.status === STATUS_LIST.PLAYING) {
+                    body.classList.remove('paused')
+                }
+            })
+
             socket.on('server-up', function () {
                 login(storedNickname, localUuid)
             })
@@ -58,12 +76,19 @@
             }
 
             function init () {
+
+                document.querySelector('.login button').addEventListener('click', function () {
+                    login(nicknameInput.value)
+                })
+
+                document.querySelector('.button').addEventListener('click', function () {
+                    socket.emit('tap-buzzer')
+                })
+
                 if (localUuid) {
                     login(storedNickname, localUuid)
                 } else {
-                    document.querySelector('.login button').addEventListener('click', function () {
-                        login(nicknameInput.value)
-                    })
+
                 }
             }
             init()

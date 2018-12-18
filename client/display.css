@@ -10,4 +10,48 @@
     right: 0;
     top: 0;
     background: #4F4A83;
+
+    margin-bottom: 30%;
 }
+
+.message-ready, .message-playing {
+    width: 171px;
+    height: 184px;
+
+    background-image: url('images/ready.svg');
+}
+
+.message-paused {
+    width:176px;
+    height:175px;
+
+    background-image: url('images/paused.svg');
+}
+
+.message-ready, .message-playing, .message-paused {
+    display: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin:auto;
+    padding-top: 230px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 112px;
+
+    color: #151858;
+}
+
+.message-paused * {
+    display: none;
+}
+
+.active-player .message-paused * {
+    display: block;
+}
+
+.ready .message-ready,.playing .message-playing,.paused .message-paused {
+    display: block;
+}
+

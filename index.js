@@ -16,7 +16,7 @@ const STATUS_LIST = {
 }
 
 var game = {
-    status: STATUS_LIST.INTRO,
+    status: STATUS_LIST.PLAYING,
     activePlayer: null,
     players: []
 }
@@ -71,8 +71,7 @@ io.on('connection', function(socket){
         if (game.status === STATUS_LIST.PLAYING) {
             game.status = STATUS_LIST.PAUSED
             game.activePlayer = findPlayer(uuid)
-            emitGame(displayClient)
-            emitGame(consoleClient)
+            emitGame(null)
         }
     })
 
@@ -127,7 +126,11 @@ function findPlayerBySocket(socket, returnIndex = false) {
 /* utils */
 function emitGame(client) {
     try {
-        client.emit('game', game)
+        if (client === null) {
+            io.emit('game', game)
+        } else {
+            client.emit('game', game)
+        }
     } catch (e) {
         console.log('ERROR : ', e)
     }

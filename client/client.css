@@ -2,7 +2,8 @@
 
 .login {
     text-align: center;
-    padding: 17px
+    padding: 17px;
+    margin-bottom: 30%; 
 }
 
 .login input, .login input:disabled {
@@ -39,4 +40,17 @@
 
 .no-form .score, .no-form .button {
     display: block
+}
+
+.button {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: auto;
+    background-image: url('images/button-active.svg');
+    background-size: contain;
+}
+
+.paused .button {
+    background-image: url('images/button-disabled.svg');
 }

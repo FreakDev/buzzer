@@ -11,24 +11,70 @@
     <body>
         <div class="main">
             <div class="header"></div>
+
+            <div class="content">
+                <p class="message-ready">Prêt...</p>
+                <p class="message-playing">buzzez !</p>
+                <div class="message-paused">
+                    <p class="player-name"></p>
+                    <p class="message">A LA MAIN</p>
+                </div>
+            </div>
+
         </div>
         <div class="top-players">
-
         </div>
-
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
             var socket = io();
+            var STATUS_LIST = {
+                'INTRO': 'INTRO',
+                'PAUSED': 'PAUSED', 
+                'READY': 'READY',
+                'PLAYING': 'PLAYING',
+            }
 
             socket.on('game', function (game) {
+                body = document.querySelector('body')
+                if (game.status === STATUS_LIST.PAUSED) {
+                    body.classList.remove('playing')
+                    body.classList.add('paused')
+
+                    if (game.activePlayer) {
+                        body.classList.add('active-player')
+                        document.querySelector('.player-name').innerHTML = game.activePlayer.nickname
+                    }                    
+                }
+
+                if (game.status === STATUS_LIST.READY) {
+                    body.classList.remove('active-player')
+                    body.classList.remove('paused')
+                    body.classList.add('ready')
+                    document.querySelector('.player-name').innerHTML = ''
+                }
+
+                if (game.status === STATUS_LIST.PLAYING) {
+                    body.classList.remove('ready')
+                    body.classList.remove('playing')
+                }
+
+                renderTop(game.players)
 
             })
 
+            function renderTop (players) {
+                localPlayers = players.slice();
 
-            socket.on('server-up', function () {
-                login()
-            })
+                localPlayers.sort((pl1, pl2) => pl1.score - pl2.score)
+
+                var html = ''
+                localPlayers.forEach((pl, index) => {
+                    html += '<li>' + (index + 1) + '. ' + pl.nickname + ' <span class="score">' + pl.score + '</span></li>'
+                });
+
+                document.querySelector('.top-players').innerHTML = '<ul>' + html + '</ul>'
+            }
 
             function login() {
                 socket.emit('display.init')
