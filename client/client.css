@@ -1,0 +1,42 @@
+
+
+.login {
+    text-align: center;
+    padding: 17px
+}
+
+.login input, .login input:disabled {
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    border: 1px solid #D8D8D8;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 60px;
+    color: #151858;
+    background: white;
+}
+
+.login button {
+    box-sizing: border-box;
+    height: 54px;
+    padding: 5px 20px;
+    border: 0;
+    border-radius: 25px;
+    color: white;
+    background-color: #2CC9AA;
+    font-size: 18px;
+    margin-top: 17px;
+}
+    
+.no-form .login button {
+    display: none;
+}
+
+.score, .button {
+    display: none;
+}
+
+.no-form .score, .no-form .button {
+    display: block
+}

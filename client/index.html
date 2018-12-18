@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="reset.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+        <link rel="stylesheet" href="common.css" />
+        <link rel="stylesheet" href="client.css" />
+    </head>
+    <body>
+        <div class="main">
+            <div class="header"></div>
+
+            <div class="login">
+                <input type=text name="login" />
+                <button>Let's go</button>
+            </div>
+
+            <div class="button">
+                
+            </div>
+
+            <div class="score"></div>
+
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            var localUuid = localStorage.getItem('uuid')
+            var storedNickname = localStorage.getItem('nickname')
+            var nicknameInput = document.querySelector('.login input');
+
+            socket.on('login-confirm', function ({uuid, nickname}) {
+                localUuid = uuid
+                localStorage.setItem('uuid', uuid)
+                storedNickname = nickname
+                localStorage.setItem('nickname', nickname)
+
+                document.querySelector('body').classList.add('no-form')
+
+                nicknameInput.disabled = true
+                nicknameInput.value = storedNickname                
+            })
+
+            socket.on('server-up', function () {
+                login(storedNickname, localUuid)
+            })
+
+            function login(nickname, uuid) {
+                var playerObject = {
+                    nickname: nickname
+                }
+                if (uuid) {
+                    playerObject.uuid = uuid
+                }
+                socket.emit('login', playerObject)
+            }
+
+            function init () {
+                if (localUuid) {
+                    login(storedNickname, localUuid)
+                } else {
+                    document.querySelector('.login button').addEventListener('click', function () {
+                        login(nicknameInput.value)
+                    })
+                }
+            }
+            init()
+
+        </script>        
+    </body>
+</html>

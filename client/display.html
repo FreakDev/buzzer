@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="reset.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+        <link rel="stylesheet" href="common.css" />
+        <link rel="stylesheet" href="display.css" />
+    </head>
+    <body>
+        <div class="main">
+            <div class="header"></div>
+        </div>
+        <div class="top-players">
+
+        </div>
+
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+
+            socket.on('game', function (game) {
+
+            })
+
+
+            socket.on('server-up', function () {
+                login()
+            })
+
+            function login() {
+                socket.emit('display.init')
+            }
+            login()
+
+        </script>        
+    </body>
+</html>

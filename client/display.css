@@ -1,0 +1,13 @@
+
+.main {
+    width: 70%;
+}
+
+.top-players {
+    height: 100%;
+    width: 30%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #4F4A83;
+}
