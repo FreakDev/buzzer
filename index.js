@@ -16,7 +16,7 @@ const STATUS_LIST = {
 }
 
 var game = {
-    status: STATUS_LIST.READY,
+    status: STATUS_LIST.INTRO,
     activePlayer: null,
     players: []
 }

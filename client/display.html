@@ -9,11 +9,15 @@
         <link rel="stylesheet" href="display.css" />
         <title>display</title>
     </head>
-    <body class="ready">
+    <body class="intro">
         <div class="main">
             <div class="header"></div>
 
             <div class="content">
+                <div class="message-intro">
+                    Connectez vous !
+                    <p></p>
+                </div>        
                 <div class="message-ready">
                     <p>Prêt...</p>
                 </div>
@@ -91,6 +95,7 @@
 
             function login() {
                 socket.emit('display.init')
+                document.querySelector('.message-intro p').innerHTML = document.location.href.replace('display.html', '')
             }
             login()
 

@@ -43,7 +43,7 @@
     padding-top: 10%;
 }
 
-.message-ready, .message-playing, .message-paused {
+.message-ready, .message-playing, .message-paused, .message-intro {
     display: none;
     background-repeat: no-repeat;
     background-position: 50% 0;
@@ -63,7 +63,7 @@
     background-image: url('images/ready.svg');
 }
 
-.message-paused {
+.message-paused, .message-intro {
     background-image: url('images/paused.svg');
 }
 
@@ -79,7 +79,7 @@
     display: block;
 }
 
-.ready .message-ready,.playing .message-playing,.paused .message-paused {
+.ready .message-ready,.playing .message-playing,.paused .message-paused, .intro .message-intro {
     display: block;
 }
 
