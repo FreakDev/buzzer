@@ -14,9 +14,9 @@
             <div class="header"></div>
 
             <div class="login">
-                <input maxlength="15" type=text name="login" />
+                <input placeholder="Choisissez un pseudo" maxlength="15" type=text name="login" />
                 <p class="error-message"></p>
-                <button>Let's go</button>
+                <button>Et c'est parti !</button>
             </div>
 
             <div class="button">
@@ -44,7 +44,7 @@
             var penality = false
             var body = document.querySelector('body')
 
-            socket.on('login-confirm', function ({uuid, nickname, score}) {
+            socket.on('login-confirm', function ({uuid, nickname, score, penality}) {
                 localUuid = uuid
                 localStorage.setItem('uuid', uuid)
                 storedNickname = nickname
@@ -54,6 +54,9 @@
                 document.querySelector('body').classList.add('no-form')
 
                 document.querySelector('.score-value').innerHTML = score
+
+                if (penality)
+                    body.classList.add('penality')
 
                 nicknameInput.disabled = true
                 nicknameInput.value = storedNickname   
@@ -116,14 +119,15 @@
                         localStorage.removeItem('uuid')
                         localStorage.removeItem('nickname')
 
+                        nicknameInput.disabled = false
+                        nicknameInput.value = ''
+
                         body.classList.remove('no-form')
                     }
                 })
 
                 if (localUuid) {
                     login(storedNickname, localUuid)
-                } else {
-
                 }
             }
             init()

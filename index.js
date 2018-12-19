@@ -67,9 +67,13 @@ io.on('connection', function(socket){
         playersSocket[player.uuid] = socket
 
         console.log(game)
-
+        
         saveGame()
-        socket.emit('login-confirm', { nickname: player.nickname, uuid: player.uuid, score: player.score })
+
+        if (displayClient)
+            emitGame(displayClient)
+
+        socket.emit('login-confirm', player)
     })
 
     socket.on('logout', function () {
@@ -79,6 +83,7 @@ io.on('connection', function(socket){
             game.players.splice(plIndex, 1)
             console.log(game)
             saveGame()
+            emitGame(null)
         }
     });
 
@@ -86,11 +91,11 @@ io.on('connection', function(socket){
         console.log('tap ', uuid, game.status)
 
         if (game.status === STATUS_LIST.PLAYING) {
-            game.status = STATUS_LIST.PAUSED
             var player = findPlayer(uuid)
             console.log('player ', player)
 
             if (player && !player.penality) {
+                game.status = STATUS_LIST.PAUSED
                 game.activePlayer = player.uuid
                 
                 saveGame()
@@ -117,11 +122,14 @@ io.on('connection', function(socket){
         var player = findPlayer(game.activePlayer)
         if (player) {
             player.score++
+            saveGame()
+
             emitGame(displayClient)
     
             console.log('good ', game)
-            saveGame()
-            playersSocket[game.activePlayer].emit('score-update', player.score)    
+            try {
+                playersSocket[game.activePlayer].emit('score-update', player.score)    
+            } catch(e) {}
         }
     })
 
@@ -136,7 +144,9 @@ io.on('connection', function(socket){
 
         console.log('penality ', game)
         saveGame()
-        playersSocket[game.activePlayer].emit('penality')
+        try {
+            playersSocket[game.activePlayer].emit('penality')
+        } catch (e) {}
     })
 
     socket.on('console.reset-penality', function () {
