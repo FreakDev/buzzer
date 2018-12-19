@@ -56,7 +56,8 @@
                 document.querySelector('.score-value').innerHTML = score
 
                 nicknameInput.disabled = true
-                nicknameInput.value = storedNickname                
+                nicknameInput.value = storedNickname   
+                
             })
 
             socket.on('login-fail', function (message) {
@@ -106,6 +107,16 @@
                 document.querySelector('.button').addEventListener('click', function () {
                     if (!penality && !body.classList.contains('paused')) {
                         socket.emit('tap-buzzer', localUuid)
+                    }
+                })
+
+                document.querySelector('.header').addEventListener('dblclick', function() {
+                    if (confirm('Êtes vous sur de vouloir vous deconnecter')) {
+                        socket.emit('logout')
+                        localStorage.removeItem('uuid')
+                        localStorage.removeItem('nickname')
+
+                        body.classList.remove('no-form')
                     }
                 })
 

@@ -44,7 +44,6 @@ io.on('connection', function(socket){
     });
 
 
-
     /* client */
     socket.on('login', function (newPlayer) {
         var player = null
@@ -72,6 +71,16 @@ io.on('connection', function(socket){
         saveGame()
         socket.emit('login-confirm', { nickname: player.nickname, uuid: player.uuid, score: player.score })
     })
+
+    socket.on('logout', function () {
+        var plIndex = findPlayerBySocket(socket, true);
+
+        if (plIndex !== -1) {
+            game.players.splice(plIndex, 1)
+            console.log(game)
+            saveGame()
+        }
+    });
 
     socket.on('tap-buzzer', function (uuid) {
         console.log('tap ', uuid, game.status)
