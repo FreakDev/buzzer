@@ -12,26 +12,41 @@
     background: #4F4A83;
 
     margin-bottom: 30%;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.message-ready, .message-playing {
-    width: 171px;
-    height: 184px;
-
-    background-image: url('images/ready.svg');
+.top-players li {
+    color: white;
+    width: 80%;
+    margin: auto;
+    padding: 10px 0;
+    font-size: 32px;
 }
 
-.message-paused {
-    width:176px;
-    height:175px;
+.top-players li .score {
+    float: right;
+}
 
-    background-image: url('images/paused.svg');
+.top-players li .crown {
+    background-image: url('images/crown.svg');
+    background-size: contain;
+    background-position: 100%;
+    background-repeat: no-repeat;
+    height: 32px;
+    width: 40px;
+    display: inline-block;
+    padding-left: 5px;
+}
+
+.content {
+    padding-top: 10%;
 }
 
 .message-ready, .message-playing, .message-paused {
     display: none;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-position: 50% 0;
     margin:auto;
     padding-top: 230px;
     font-family: Roboto;
@@ -39,8 +54,21 @@
     font-weight: 500;
     line-height: normal;
     font-size: 112px;
+    text-align: center;
 
     color: #151858;
+}
+
+.message-ready, .message-playing {
+    background-image: url('images/ready.svg');
+}
+
+.message-paused {
+    background-image: url('images/paused.svg');
+}
+
+.message-paused p:last-child {
+    font-size: 32px
 }
 
 .message-paused * {

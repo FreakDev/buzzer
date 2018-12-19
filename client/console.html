@@ -1,11 +1,91 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link rel="stylesheet" href="reset.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+        <link rel="stylesheet" href="common.css" />
+        <link rel="stylesheet" href="console.css" /> 
+        <title>console</title>   
     </head>
     <body>
+        <div class="btn-row active">
+            active player :
+            <p class="field"></p>
+        </div>
+        <div class="btn-row game-status">
+            game status :
+            <p class="status-label"></p>
+        </div>
+        <div class="btn-row game-status-control">
+            <p class="current-status"></p>
+            <button class="reset">Reset Penality</button>
+            <button class="ready">Ready</button>
+            <button class="play">Play</button>
+        </div>
+
+        <div class="btn-row good-bad">
+            <button class="good">OK</button>
+            <button class="bad">KO</button>
+        </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io();
+            var socket = io();
+
+            var STATUS_LIST = {
+                'INTRO': 'INTRO',
+                'PAUSED': 'PAUSED', 
+                'READY': 'READY',
+                'PLAYING': 'PLAYING',
+            }
+
+            var playBtn = document.querySelector('.play')
+            var readyBtn = document.querySelector('.ready')
+            var resetBtn = document.querySelector('.reset')
+            var goodBtn = document.querySelector('.good')
+            var badBtn = document.querySelector('.bad')
+
+            var activeField = document.querySelector('.active .field')
+            var gameStatusLabel = document.querySelector('.game-status .status-label')
+
+            socket.on('game', function (game) {
+                gameStatusLabel.innerHTML = game.status
+
+                if (game.activePlayer) {
+                    activeField.innerHTML = game.players.find(pl => pl.uuid === game.activePlayer).nickname
+                } else {
+                    activeField.innerHTML = ''
+                }
+            })
+
+            function login() {
+                socket.emit('console.init')
+
+                playBtn.addEventListener('click', function () {
+                    socket.emit('console.set-status', STATUS_LIST.PLAYING)
+                })
+
+                readyBtn.addEventListener('click', function () {
+                    socket.emit('console.set-status', STATUS_LIST.READY)
+                })
+
+                resetBtn.addEventListener('click', function () {
+                    socket.emit('console.reset-penality')
+                })
+
+
+                goodBtn.addEventListener('click', function () {
+                    socket.emit('console.good-answer')
+                })
+
+                badBtn.addEventListener('click', function () {
+                    socket.emit('console.bad-answer')
+                })
+
+            }
+            login()
+
         </script>        
     </body>
 </html>

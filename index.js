@@ -16,7 +16,7 @@ const STATUS_LIST = {
 }
 
 var game = {
-    status: STATUS_LIST.PLAYING,
+    status: STATUS_LIST.READY,
     activePlayer: null,
     players: []
 }
@@ -47,7 +47,6 @@ io.on('connection', function(socket){
     socket.on('login', function (newPlayer) {
         var player = null
 
-
         if (newPlayer.uuid) {
             player = findPlayer(newPlayer.uuid, false)
         }
@@ -67,11 +66,19 @@ io.on('connection', function(socket){
 
         socket.emit('login-confirm', { nickname: player.nickname, uuid: player.uuid })
     })
+
     socket.on('tap-buzzer', function (uuid) {
+        console.log('tap ', uuid, game.status)
+
         if (game.status === STATUS_LIST.PLAYING) {
             game.status = STATUS_LIST.PAUSED
-            game.activePlayer = findPlayer(uuid)
-            emitGame(null)
+            var player = findPlayer(uuid)
+            console.log('player ', player)
+
+            if (player && !player.penality) {
+                game.activePlayer = player.uuid
+                emitGame(null)    
+            }
         }
     })
 
@@ -80,22 +87,61 @@ io.on('connection', function(socket){
     socket.on('console.init', function () {
         if (!consoleClient) {
             consoleClient = socket
+            emitGame(consoleClient)
         } else {
             return null
         }
     })
 
-    socket.on('console.good-answer', function (uuid) {
-        game.activePlayer.score++
-        emitGame(displayClient)
-        emitGame(consoleClient)
-        playersSocket[game.activePlayer.uuid].emit('score-update', game.activePlayer.score)
+    socket.on('console.good-answer', function () {
+        if (socket.id !== consoleClient.id)
+            return
+
+        var player = findPlayer(game.activePlayer)
+        if (player) {
+            player.score++
+            emitGame(displayClient)
+    
+            console.log('good ', game)
+    
+            playersSocket[game.activePlayer].emit('score-update', player.score)    
+        }
     })
 
-    socket.on('console.set-status', function (uuid, status) {
+    socket.on('console.bad-answer', function () {
+        if (socket.id !== consoleClient.id)
+            return
+
+        var player = findPlayer(game.activePlayer)
+        if (player) {
+            player.penality = true
+        }
+
+        console.log('penality ', game)
+        playersSocket[game.activePlayer].emit('penality')
+    })
+
+    socket.on('console.reset-penality', function () {
+        if (socket.id !== consoleClient.id)
+            return
+
+        game.players.forEach(pl => pl.penality = false)
+
+        console.log('reset penality ', game)
+        socket.broadcast.emit('reset-penality')
+    })
+
+    socket.on('console.set-status', function (status) {
+        if (socket.id !== consoleClient.id)
+            return
+
         game.status = status
-        emitGame(displayClient)
-        emitGame(consoleClient)
+        if (status === STATUS_LIST.READY) {
+            game.activePlayer = null
+        }
+
+        console.log('ready ', game)
+        emitGame(null)
     })
 
     /* display */

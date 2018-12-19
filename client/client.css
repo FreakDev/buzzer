@@ -3,7 +3,7 @@
 .login {
     text-align: center;
     padding: 17px;
-    margin-bottom: 30%; 
+    /* margin-bottom: 100px;  */
 }
 
 .login input, .login input:disabled {
@@ -16,6 +16,7 @@
     border-radius: 60px;
     color: #151858;
     background: white;
+    font-size: 25px;
 }
 
 .login button {
@@ -43,14 +44,25 @@
 }
 
 .button {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    margin: auto;
+    height: 60%;
     background-image: url('images/button-active.svg');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
     background-size: contain;
 }
 
-.paused .button {
+.paused .button, .penality .button {
     background-image: url('images/button-disabled.svg');
+}
+
+.score {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #4F4A83;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
 }

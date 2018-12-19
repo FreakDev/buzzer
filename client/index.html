@@ -7,6 +7,7 @@
 
         <link rel="stylesheet" href="common.css" />
         <link rel="stylesheet" href="client.css" />
+        <title>buzzer</title>
     </head>
     <body>
         <div class="main">
@@ -21,7 +22,9 @@
 
             </div>
 
-            <div class="score"></div>
+            <div class="score">
+                SCORE&nbsp;:&nbsp;<span class="score-value">0</span> 
+            </div>
 
         </div>
         <script src="/socket.io/socket.io.js"></script>
@@ -37,6 +40,8 @@
             var localUuid = localStorage.getItem('uuid')
             var storedNickname = localStorage.getItem('nickname')
             var nicknameInput = document.querySelector('.login input');
+            var penality = false
+            var body = document.querySelector('body')
 
             socket.on('login-confirm', function ({uuid, nickname}) {
                 localUuid = uuid
@@ -51,18 +56,27 @@
             })
 
             socket.on('game', function (game) {
-                body = document.querySelector('body')
                 if (game.status === STATUS_LIST.PAUSED) {
                     !body.classList.contains('paused') && body.classList.add('paused')
                 }
 
-                if (game.status === STATUS_LIST.PLAYING) {
+                if (game.status === STATUS_LIST.READY) {
                     body.classList.remove('paused')
                 }
             })
 
-            socket.on('server-up', function () {
-                login(storedNickname, localUuid)
+            socket.on('reset-penality', function () {
+                penality = false
+                body.classList.remove('penality')
+            })
+
+            socket.on('penality', function () {
+                penality = true
+                body.classList.add('penality')
+            })
+
+            socket.on('score-update', function (score) {
+                document.querySelector('.score-value').innerHTML = score
             })
 
             function login(nickname, uuid) {
@@ -82,7 +96,9 @@
                 })
 
                 document.querySelector('.button').addEventListener('click', function () {
-                    socket.emit('tap-buzzer')
+                    if (!penality && !body.classList.contains('paused')) {
+                        socket.emit('tap-buzzer', localUuid)
+                    }
                 })
 
                 if (localUuid) {

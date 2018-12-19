@@ -3,7 +3,7 @@ body {
 }
 
 .header {
-    /* background-image: url('images/header.svg'); */
+    background-image: url('images/header.svg');
     background-size: contain;
     background-repeat: no-repeat;
     height: 55px;
@@ -14,6 +14,7 @@ body {
 
     .header {
         background-position: 50%;
+        background-size: 100% 75%;
         height: 30px;
         margin: 20px 0 0 20px;
         margin: 0;
