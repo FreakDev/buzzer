@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var fs = require('fs');
 
 var uuid = require('uuid/v4');
 
@@ -34,6 +35,7 @@ io.on('connection', function(socket){
 
         if (plIndex !== -1) {
             game.players[plIndex].active = false
+            saveGame()
         } else if (consoleClient && consoleClient.id === socket.id) {
             consoleClient = null
         } else if (displayClient && displayClient.id === socket.id) {
@@ -67,7 +69,8 @@ io.on('connection', function(socket){
 
         console.log(game)
 
-        socket.emit('login-confirm', { nickname: player.nickname, uuid: player.uuid })
+        saveGame()
+        socket.emit('login-confirm', { nickname: player.nickname, uuid: player.uuid, score: player.score })
     })
 
     socket.on('tap-buzzer', function (uuid) {
@@ -80,6 +83,8 @@ io.on('connection', function(socket){
 
             if (player && !player.penality) {
                 game.activePlayer = player.uuid
+                
+                saveGame()
                 emitGame(null)    
             }
         }
@@ -97,7 +102,7 @@ io.on('connection', function(socket){
     })
 
     socket.on('console.good-answer', function () {
-        if (socket.id !== consoleClient.id)
+        if (consoleClient && socket.id !== consoleClient.id)
             return
 
         var player = findPlayer(game.activePlayer)
@@ -106,13 +111,13 @@ io.on('connection', function(socket){
             emitGame(displayClient)
     
             console.log('good ', game)
-    
+            saveGame()
             playersSocket[game.activePlayer].emit('score-update', player.score)    
         }
     })
 
     socket.on('console.bad-answer', function () {
-        if (socket.id !== consoleClient.id)
+        if (consoleClient && socket.id !== consoleClient.id)
             return
 
         var player = findPlayer(game.activePlayer)
@@ -121,21 +126,23 @@ io.on('connection', function(socket){
         }
 
         console.log('penality ', game)
+        saveGame()
         playersSocket[game.activePlayer].emit('penality')
     })
 
     socket.on('console.reset-penality', function () {
-        if (socket.id !== consoleClient.id)
+        if (consoleClient && socket.id !== consoleClient.id)
             return
 
         game.players.forEach(pl => pl.penality = false)
 
         console.log('reset penality ', game)
+        saveGame()
         socket.broadcast.emit('reset-penality')
     })
 
     socket.on('console.set-status', function (status) {
-        if (socket.id !== consoleClient.id)
+        if (consoleClient && socket.id !== consoleClient.id)
             return
 
         game.status = status
@@ -144,6 +151,7 @@ io.on('connection', function(socket){
         }
 
         console.log('ready ', game)
+        saveGame()
         emitGame(null)
     })
 
@@ -159,6 +167,7 @@ io.on('connection', function(socket){
 
 });
 
+/* utils */
 function findPlayer(uuid, onlyActive = true) {
     return game.players.find(pl => ( pl.active || !onlyActive ) && pl.uuid === uuid)
 }
@@ -172,7 +181,6 @@ function findPlayerBySocket(socket, returnIndex = false) {
     return result
 }
 
-/* utils */
 function emitGame(client) {
     try {
         if (client === null) {
@@ -185,6 +193,21 @@ function emitGame(client) {
     }
 }
 
+function saveGame() {
+    fs.writeFile('game.json', JSON.stringify(game), 'utf8', function() {})
+}
+
+function restaureGame() {
+    try {
+        data = fs.readFileSync('game.json', 'utf8')
+        game = JSON.parse(data)
+        console.log('restaure game ', game)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+restaureGame()
 
 http.listen(3000, function(){
     console.log('listening on *:3000');

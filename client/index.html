@@ -44,7 +44,7 @@
             var penality = false
             var body = document.querySelector('body')
 
-            socket.on('login-confirm', function ({uuid, nickname}) {
+            socket.on('login-confirm', function ({uuid, nickname, score}) {
                 localUuid = uuid
                 localStorage.setItem('uuid', uuid)
                 storedNickname = nickname
@@ -52,6 +52,8 @@
 
                 document.querySelector('.error-message').innerHTML = ''
                 document.querySelector('body').classList.add('no-form')
+
+                document.querySelector('.score-value').innerHTML = score
 
                 nicknameInput.disabled = true
                 nicknameInput.value = storedNickname                
