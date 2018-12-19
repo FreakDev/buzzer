@@ -14,7 +14,8 @@
             <div class="header"></div>
 
             <div class="login">
-                <input type=text name="login" />
+                <input maxlength="15" type=text name="login" />
+                <p class="error-message"></p>
                 <button>Let's go</button>
             </div>
 
@@ -49,10 +50,15 @@
                 storedNickname = nickname
                 localStorage.setItem('nickname', nickname)
 
+                document.querySelector('.error-message').innerHTML = ''
                 document.querySelector('body').classList.add('no-form')
 
                 nicknameInput.disabled = true
                 nicknameInput.value = storedNickname                
+            })
+
+            socket.on('login-fail', function (message) {
+                document.querySelector('.error-message').innerHTML = message
             })
 
             socket.on('game', function (game) {

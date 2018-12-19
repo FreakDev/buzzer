@@ -52,7 +52,10 @@ io.on('connection', function(socket){
         }
 
         if (!player) {
-            // @todo check duplicate nickname
+            if (game.players.find(pl => pl.nickname.toLowerCase() === newPlayer.nickname.toLowerCase())) {
+                socket.emit('login-fail', 'ce pseudo est déjà pris')
+                return
+            }
             newPlayer.uuid = uuid()
             game.players.push(newPlayer)
             player = newPlayer
