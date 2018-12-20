@@ -127,7 +127,13 @@
                 })
 
                 if (localUuid) {
-                    login(storedNickname, localUuid)
+                    if (socket.connected) {
+                        login(storedNickname, localUuid)
+                    } else {
+                        socket.on('connect', function () {
+                            login(storedNickname, localUuid)
+                        })
+                    }
                 }
             }
             init()
