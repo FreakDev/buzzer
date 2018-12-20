@@ -62,30 +62,36 @@
             function login() {
                 socket.emit('console.init')
 
-                playBtn.addEventListener('click', function () {
-                    socket.emit('console.set-status', STATUS_LIST.PLAYING)
-                })
-
-                readyBtn.addEventListener('click', function () {
-                    socket.emit('console.set-status', STATUS_LIST.READY)
-                })
-
-                resetBtn.addEventListener('click', function () {
-                    socket.emit('console.reset-penality')
-                })
-
-
-                goodBtn.addEventListener('click', function () {
-                    socket.emit('console.good-answer')
-                })
-
-                badBtn.addEventListener('click', function () {
-                    socket.emit('console.bad-answer')
-                })
-
             }
-            login()
 
+            playBtn.addEventListener('click', function () {
+                socket.emit('console.set-status', STATUS_LIST.PLAYING)
+            })
+
+            readyBtn.addEventListener('click', function () {
+                socket.emit('console.set-status', STATUS_LIST.READY)
+            })
+
+            resetBtn.addEventListener('click', function () {
+                socket.emit('console.reset-penality')
+            })
+
+
+            goodBtn.addEventListener('click', function () {
+                socket.emit('console.good-answer')
+            })
+
+            badBtn.addEventListener('click', function () {
+                socket.emit('console.bad-answer')
+            })
+
+            if (socket.connected) {
+                login()
+            } else {
+                socket.on('connect', function () {
+                    login()
+                })
+            }
         </script>        
     </body>
 </html>

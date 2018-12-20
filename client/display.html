@@ -97,8 +97,14 @@
                 socket.emit('display.init')
                 document.querySelector('.message-intro p').innerHTML = document.location.href.replace('display.html', '')
             }
-            login()
 
+            if (socket.connected) {
+                login()
+            } else {
+                socket.on('connect', function () {
+                    login()
+                })
+            }
         </script>        
     </body>
 </html>
